@@ -97,7 +97,7 @@ Este é um sistema web para gerenciar processos do Sistema Eletrônico de Inform
 ### **Melhorias futuras**
 Implementação de tutoriais interativos para o SEI.
 
-### **Autor**
+### **Autora**
 
 Desenvolvido por **Yanca Fernandes**  
 📧 **E-mail:** [yancafernandes2@gmail.com](mailto:yancafernandes2@gmail.com)
