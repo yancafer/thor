@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -106,7 +106,7 @@ function SignUp() {
           </button>
         </form>
         <p className="login-footer">
-          Já tem uma conta? <a href="/login">Faça login</a>
+          Já tem uma conta? <Link to="/login">Faça login</Link>
         </p>
       </div>
     </div>
