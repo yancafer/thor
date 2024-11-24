@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -84,7 +84,7 @@ function Login() {
         {error && <p className="login-error">{error}</p>}
 
         <p className="login-footer">
-          Ainda não tem uma conta? <a href="/signup">Cadastre-se</a>
+          Ainda não tem uma conta? <Link to="/signup">Cadastre-se</Link>
         </p>
       </div>
     </div>
