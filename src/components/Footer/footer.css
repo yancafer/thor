@@ -1,0 +1,19 @@
+.footer {
+    width: 100%;
+    padding: 1rem;
+    color: #e1e7ff; /* Cor do texto em tom claro */
+    text-align: center;
+    font-size: 0.9rem;
+    position: fixed; /* Sempre no final da página */
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08); /* Sombra para separação */
+  }
+  
+  .footer-box {
+    margin: 0;
+    font-weight: 400;
+    color: #000;
+    font-weight: 500;
+  }

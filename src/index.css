@@ -1,0 +1,122 @@
+/* Reset Global */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  scroll-behavior: smooth; /* Animação suave ao rolar */
+  font-size: 100%; /* Define o tamanho base da fonte */
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  font-family: "Roboto", sans-serif; /* Fonte principal */
+  line-height: 1.5; /* Altura de linha consistente */
+  -webkit-font-smoothing: antialiased; /* Melhora o render de fontes no Chrome/Safari */
+  -moz-osx-font-smoothing: grayscale; /* Melhora o render de fontes no Firefox */
+  overflow-x: hidden; /* Evita barra de rolagem horizontal */
+  background-color: #f5f5f5; /* Cor de fundo padrão */
+  color: #333; /* Cor de texto padrão */
+}
+
+img,
+picture,
+video,
+canvas {
+  display: block;
+  max-width: 100%; /* Garante que mídias não ultrapassem seus contêineres */
+  height: auto; /* Mantém a proporção */
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit; /* Herda a fonte do body */
+  border: none; /* Remove bordas padrão */
+  outline: none; /* Remove contorno ao focar */
+}
+
+a {
+  text-decoration: none; /* Remove sublinhado */
+  color: inherit; /* Herda a cor do texto */
+}
+
+ul,
+ol {
+  list-style: none; /* Remove marcadores e números */
+}
+
+table {
+  border-collapse: collapse; /* Remove espaçamento entre células */
+  width: 100%; /* Garante que a tabela ocupe o contêiner */
+}
+
+button {
+  cursor: pointer; /* Exibe o cursor de ponteiro */
+  border: none;
+  background: none; /* Remove fundo padrão */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0; /* Remove margens padrão */
+  font-weight: normal; /* Normaliza pesos de títulos */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+  font-size: 1em; /* Garante tamanho de fonte consistente */
+}
+
+/* Layout Base */
+body,
+html {
+  display: flex;
+  flex-direction: column; /* Layout vertical padrão */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Adapta para layouts flexíveis */
+  align-items: stretch; /* Alinha itens ao longo do eixo principal */
+}
+
+/* Focus Styles (Acessibilidade) */
+:focus {
+  outline: 2px solid #007bff; /* Contorno visível ao focar */
+  outline-offset: 2px;
+}
+
+/* Scrollbar Custom (Opcional) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
