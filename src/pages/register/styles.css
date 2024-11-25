@@ -130,3 +130,15 @@
     padding: 8px;
   }
 }
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+input.error,
+select.error {
+  border: 2px solid red;
+  background-color: #ffe6e6;
+}

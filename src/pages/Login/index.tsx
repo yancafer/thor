@@ -7,33 +7,50 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import OdinLogo from "../../assets/odin.png";
+import DOMPurify from "dompurify";
 import "./style.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Estado para controle do loader
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
 
+  const validateInputs = () => {
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Por favor, insira um e-mail válido.");
+      return false;
+    }
+    if (password.trim().length === 0) {
+      setError("A senha não pode estar vazia.");
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateInputs()) return;
+
+    setIsLoading(true);
     setError(null);
-    setIsLoading(true); // Inicia o estado de carregamento
 
     try {
-      // Configura a persistência do login para `local`
+      const sanitizedEmail = DOMPurify.sanitize(email);
+
       await setPersistence(auth, browserLocalPersistence);
+      await signInWithEmailAndPassword(auth, sanitizedEmail, password);
 
-      // Realiza o login com e-mail e senha
-      await signInWithEmailAndPassword(auth, email, password);
-
-      navigate("/homepage"); // Redireciona após login bem-sucedido
+      navigate("/homepage");
     } catch (err: any) {
+      console.error("Erro de autenticação:", err);
       setError("Falha ao fazer login. Verifique suas credenciais.");
     } finally {
-      setIsLoading(false); // Finaliza o estado de carregamento
+      setIsLoading(false);
     }
   };
 
@@ -52,37 +69,46 @@ function Login() {
         <h2>Seja bem-vindo!</h2>
         <p>Para acessar o sistema, faça login com seu usuário e senha.</p>
 
-        {isLoading ? ( // Exibe o loader enquanto está carregando
+        {isLoading ? (
           <div className="loader-container">
             <div className="spinner"></div>
             <p>Entrando...</p>
           </div>
         ) : (
-          <form className="login-form" onSubmit={handleLogin}>
+          <form className="login-form" onSubmit={handleLogin} noValidate>
             <input
-              type="text"
-              placeholder="Usuário ou e-mail"
-              className="login-input"
+              type="email"
+              placeholder="E-mail"
+              className={`login-input ${error ? "error" : ""}`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null);
+              }}
               required
             />
             <input
               type="password"
               placeholder="Senha"
-              className="login-input"
+              className={`login-input ${error ? "error" : ""}`}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
               required
             />
-            <button type="submit" className="login-button">
+            <button
+              type="submit"
+              className="login-button"
+              disabled={isLoading}
+            >
               Entrar
             </button>
           </form>
         )}
 
         {error && <p className="login-error">{error}</p>}
-
         <p className="login-footer">
           Ainda não tem uma conta? <Link to="/signup">Cadastre-se</Link>
         </p>
