@@ -36,6 +36,9 @@ function SignUp() {
     }
     if (password !== confirmPassword) {
       errors.confirmPassword = "As senhas não coincidem.";
+      toast.error("As senhas não coincidem. Verifique e tente novamente.", {
+        position: "top-right",
+      });
     }
 
     setErrors(errors);
@@ -45,7 +48,7 @@ function SignUp() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setErrors((prev) => ({ ...prev, [name]: "" })); // Limpa erros ao alterar o campo
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -67,9 +70,19 @@ function SignUp() {
       navigate("/login");
     } catch (err: any) {
       console.error(err);
-      toast.error("Erro ao criar conta. Tente novamente mais tarde.", {
-        position: "top-right",
-      });
+      if (err.code === "auth/email-already-in-use") {
+        setErrors((prev) => ({
+          ...prev,
+          email: "Este e-mail já está cadastrado.",
+        }));
+        toast.error("E-mail já cadastrado. Use outro ou faça login.", {
+          position: "top-right",
+        });
+      } else {
+        toast.error("Erro ao criar conta. Tente novamente mais tarde.", {
+          position: "top-right",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
