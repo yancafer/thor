@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
       querySnapshot.forEach((doc) => {
         fetchedProcesses.push({ id: doc.id, ...doc.data() } as Process);
       });
-  
+
       fetchedProcesses.sort((a, b) => {
         const dateA = new Date(a.creationDate).getTime();
         const dateB = new Date(b.creationDate).getTime();
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error("Erro ao buscar processos:", error);
     }
-  };  
+  };
 
   const handleSelectProcess = (processId: string) => {
     setSelectedProcesses((prev) =>
@@ -264,7 +264,12 @@ const Dashboard: React.FC = () => {
                     </a>
                   </td>
 
-                  <td className="table-cell">{process.subject}</td>
+                  <td className="table-cell">
+                    {process.subject.length > 30
+                      ? `${process.subject.slice(0,60)}...`
+                      : process.subject}
+                  </td>
+
                   <td className="table-cell">{process.creationDate}</td>
                   <td className="table-cell">{process.receivedDate || "-"}</td>
                   <td className="table-cell">{process.sentDate || "-"}</td>
