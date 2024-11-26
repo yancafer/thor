@@ -175,6 +175,30 @@
   background-color: #f9f9f9;
 }
 
+/* Links */
+.process-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.process-link:hover {
+  color: #0056b3;
+  transform: scale(1.2);
+}
+
+.link-icon {
+  font-size: 14px;
+  color: #007bff;
+  transition: transform 0.3s ease;
+}
+
+.process-link:hover .link-icon {
+  transform: scale(1.2);
+}
+
 /* Modal */
 .modal {
   position: fixed;
