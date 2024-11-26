@@ -56,12 +56,18 @@ const Dashboard: React.FC = () => {
       querySnapshot.forEach((doc) => {
         fetchedProcesses.push({ id: doc.id, ...doc.data() } as Process);
       });
+  
+      fetchedProcesses.sort((a, b) => {
+        const dateA = new Date(a.creationDate).getTime();
+        const dateB = new Date(b.creationDate).getTime();
+        return dateB - dateA; // Ordem decrescente
+      });
       setProcesses(fetchedProcesses);
       setFilteredProcesses(fetchedProcesses);
     } catch (error) {
       console.error("Erro ao buscar processos:", error);
     }
-  };
+  };  
 
   const handleSelectProcess = (processId: string) => {
     setSelectedProcesses((prev) =>
