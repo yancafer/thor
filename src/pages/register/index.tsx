@@ -29,6 +29,9 @@ const Register: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
     const sanitizedNumber = DOMPurify.sanitize(formData.number);
 
+    // Ano atual
+    const currentYear = new Date().getFullYear();
+
     // Validações
     if (!sanitizedNumber.match(/^[0-9./-]+$/)) {
       newErrors.number =
@@ -42,6 +45,11 @@ const Register: React.FC = () => {
     }
     if (!formData.creationDate) {
       newErrors.creationDate = "A data de criação é obrigatória.";
+    } else {
+      const year = parseInt(formData.creationDate.split("-")[0], 10);
+      if (isNaN(year) || year < 2010 || year > currentYear) {
+        newErrors.creationDate = `Ano inválido. Insira um ano entre 2010 e ${currentYear}.`;
+      }
     }
 
     setErrors(newErrors);
@@ -52,8 +60,25 @@ const Register: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    const currentYear = new Date().getFullYear();
+
+    if (name === "creationDate" || name === "receivedDate" || name === "sentDate") {
+      const year = value.split("-")[0];
+      if (
+        year.length > 4 ||
+        parseInt(year, 10) < 2010 ||
+        parseInt(year, 10) > currentYear
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `Ano inválido. Insira um ano entre 2010 e ${currentYear}.`,
+        }));
+        return;
+      }
+    }
+
     setFormData({ ...formData, [name]: value });
-    setErrors((prev) => ({ ...prev, [name]: "" })); // Limpa o erro ao alterar o campo
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const checkIfProcessExists = async () => {
@@ -63,7 +88,7 @@ const Register: React.FC = () => {
     const q = query(processesRef, where("number", "==", formData.number));
 
     const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty; // Retorna true se o processo já existe
+    return !querySnapshot.empty;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +112,6 @@ const Register: React.FC = () => {
         return;
       }
 
-      // Sanitiza os dados do formulário
       const sanitizedData = {
         ...formData,
         number: DOMPurify.sanitize(formData.number),
