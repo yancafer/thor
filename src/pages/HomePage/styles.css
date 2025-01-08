@@ -380,3 +380,112 @@
     font-size: 14px;
   }
 }
+
+/* Sidebar responsiva */
+.sidebar {
+  width: 250px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Botão para alternar a sidebar */
+.sidebar-toggle {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: block;
+    z-index: 1001;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* Tabela scrollável em telas pequenas */
+@media (max-width: 768px) {
+  .process-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table-cell {
+    white-space: nowrap;
+  }
+
+  .table-header {
+    display: none; /* Remove headers em telas pequenas */
+  }
+
+  .table-row {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #f1f1f1;
+    margin-bottom: 10px;
+  }
+
+  .table-cell {
+    flex: 1 1 50%; /* Cada célula ocupa metade da largura */
+    padding: 5px 10px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .table-cell:first-child {
+    font-weight: bold;
+  }
+}
+
+/* Modal responsiva */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    padding: 15px;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 10px;
+  }
+}
+
+/* Botões responsivos */
+@media (max-width: 768px) {
+  .delete-group-button,
+  .confirm-status-button,
+  .group-status-select {
+    flex: 1;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .page-button {
+    flex: 1;
+    margin-bottom: 5px;
+  }
+}

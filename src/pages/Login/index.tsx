@@ -6,7 +6,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import OdinLogo from "../../assets/odin.png";
+import dirjuspLogo from "../../assets/dirjusp.png";
 import DOMPurify from "dompurify";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -67,7 +67,7 @@ function Login() {
       <ToastContainer />
       <div className="nav-img">
         <img
-          src={OdinLogo}
+          src={dirjuspLogo}
           alt="Observatório - Dirjusp"
           className="login-logo"
         />

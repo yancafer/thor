@@ -43,9 +43,7 @@ const Register: React.FC = () => {
     if (!formData.subject.trim()) {
       newErrors.subject = "O assunto não pode estar vazio.";
     }
-    if (!formData.creationDate) {
-      newErrors.creationDate = "A data de criação é obrigatória.";
-    } else {
+    if (formData.creationDate) {
       const year = parseInt(formData.creationDate.split("-")[0], 10);
       if (isNaN(year) || year < 2010 || year > currentYear) {
         newErrors.creationDate = `Ano inválido. Insira um ano entre 2010 e ${currentYear}.`;
@@ -185,7 +183,7 @@ const Register: React.FC = () => {
               )}
             </div>
             <div className="form-group">
-              <label htmlFor="creationDate">Data de criação *</label>
+              <label htmlFor="creationDate">Data de criação</label>
               <input
                 id="creationDate"
                 type="date"
@@ -193,8 +191,8 @@ const Register: React.FC = () => {
                 value={formData.creationDate}
                 onChange={handleChange}
                 className={errors.creationDate ? "error" : ""}
-                required
               />
+
               {errors.creationDate && (
                 <p className="error-message">{errors.creationDate}</p>
               )}

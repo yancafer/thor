@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import OdinLogo from "../../assets/odin.png";
+import dirjuspLogo from '../../assets/dirjusp.png';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { toast, ToastContainer } from "react-toastify";
@@ -94,7 +94,7 @@ function SignUp() {
 
       <div className="nav-img">
         <img
-          src={OdinLogo}
+          src={dirjuspLogo}
           alt="Observatório - Dirjusp"
           className="login-logo"
         />
