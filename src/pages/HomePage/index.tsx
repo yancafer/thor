@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
-import { collection, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -26,8 +32,8 @@ const Dashboard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("");
   const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1); // Página atual
-  const itemsPerPage = 10; // Número de itens por página
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (user?.uid) {
@@ -46,26 +52,31 @@ const Dashboard: React.FC = () => {
       return matchesSearch && matchesStatus;
     });
     setFilteredProcesses(filtered);
-    setCurrentPage(1); // Reseta para a primeira página ao filtrar
+    setCurrentPage(1);
   }, [searchTerm, selectedFilter, processes]);
 
   const fetchProcesses = async (userId: string) => {
     try {
-      const querySnapshot = await getDocs(collection(db, "users", userId, "processes"));
-      const fetchedProcesses: Process[] = [];
-      querySnapshot.forEach((doc) => {
-        fetchedProcesses.push({ id: doc.id, ...doc.data() } as Process);
-      });
+      const querySnapshot = await getDocs(
+        collection(db, "users", userId, "processes")
+      );
+      const fetchedProcesses: Process[] = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Process[];
 
+      // Ordenação por data de criação (decrescente)
       fetchedProcesses.sort((a, b) => {
         const dateA = new Date(a.creationDate).getTime();
         const dateB = new Date(b.creationDate).getTime();
-        return dateB - dateA; // Ordem decrescente
+        return dateB - dateA;
       });
+
       setProcesses(fetchedProcesses);
       setFilteredProcesses(fetchedProcesses);
     } catch (error) {
       console.error("Erro ao buscar processos:", error);
+      toast.error("Erro ao carregar os processos. Tente novamente!");
     }
   };
 
@@ -78,20 +89,26 @@ const Dashboard: React.FC = () => {
   };
 
   const handleSelectAll = (isChecked: boolean) => {
-    if (isChecked) {
-      setSelectedProcesses(filteredProcesses.map((process) => process.id));
-    } else {
-      setSelectedProcesses([]);
-    }
+    setSelectedProcesses(
+      isChecked ? filteredProcesses.map((process) => process.id) : []
+    );
   };
 
   const handleDeleteSelected = async () => {
     if (!user) return;
 
-    if (window.confirm("Tem certeza que deseja deletar os processos selecionados?")) {
+    if (
+      window.confirm("Tem certeza que deseja deletar os processos selecionados?")
+    ) {
       try {
         for (const processId of selectedProcesses) {
-          const processRef = doc(db, "users", user.uid, "processes", processId);
+          const processRef = doc(
+            db,
+            "users",
+            user.uid,
+            "processes",
+            processId
+          );
           await deleteDoc(processRef);
         }
         toast.success("Processos deletados com sucesso!");
@@ -107,17 +124,27 @@ const Dashboard: React.FC = () => {
   const handleChangeStatusSelected = async () => {
     if (!user || !newStatus) return;
 
-    if (window.confirm("Tem certeza que deseja alterar o status dos processos selecionados?")) {
+    if (
+      window.confirm(
+        "Tem certeza que deseja alterar o status dos processos selecionados?"
+      )
+    ) {
       try {
         for (const processId of selectedProcesses) {
-          const processRef = doc(db, "users", user.uid, "processes", processId);
+          const processRef = doc(
+            db,
+            "users",
+            user.uid,
+            "processes",
+            processId
+          );
           await updateDoc(processRef, { status: newStatus });
         }
         toast.success("Status atualizado com sucesso!");
         fetchProcesses(user.uid);
         setSelectedProcesses([]);
       } catch (error) {
-        console.error("Erro ao atualizar status dos processos:", error);
+        console.error("Erro ao atualizar status:", error);
         toast.error("Erro ao atualizar status. Tente novamente!");
       }
     }
@@ -125,18 +152,24 @@ const Dashboard: React.FC = () => {
 
   const handleEditStatus = (process: Process) => {
     setSelectedProcess(process);
-    setNewStatus(process.status); // Preenche o modal com o status atual
+    setNewStatus(process.status);
   };
 
   const handleSaveStatus = async () => {
     if (!selectedProcess || !user) return;
 
     try {
-      const processRef = doc(db, "users", user.uid, "processes", selectedProcess.id);
+      const processRef = doc(
+        db,
+        "users",
+        user.uid,
+        "processes",
+        selectedProcess.id
+      );
       await updateDoc(processRef, { status: newStatus });
       toast.success("Status atualizado com sucesso!");
-      setSelectedProcess(null); // Fecha o modal
-      fetchProcesses(user.uid); // Atualiza os processos
+      setSelectedProcess(null);
+      fetchProcesses(user.uid);
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
       toast.error("Erro ao atualizar status. Tente novamente!");
@@ -148,7 +181,7 @@ const Dashboard: React.FC = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
+  
   return (
     <div className="dashboard">
       <Sidebar />
@@ -266,7 +299,7 @@ const Dashboard: React.FC = () => {
 
                   <td className="table-cell">
                     {process.subject.length > 30
-                      ? `${process.subject.slice(0,60)}...`
+                      ? `${process.subject.slice(0, 60)}...`
                       : process.subject}
                   </td>
 

@@ -4,7 +4,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import DOMPurify from "dompurify";
 import "./styles.css";
@@ -89,6 +89,14 @@ const Register: React.FC = () => {
     return !querySnapshot.empty;
   };
 
+  const saveProcess = async (userId: string, data: any) => {
+    const processesRef = collection(db, "users", userId, "processes");
+    await addDoc(processesRef, {
+      ...data,
+      createdAt: new Date(), // Adiciona a data de criação
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -117,6 +125,7 @@ const Register: React.FC = () => {
         subject: DOMPurify.sanitize(formData.subject),
       };
 
+      // O campo "creationDate" será gerado automaticamente no backend
       await saveProcess(user.uid, sanitizedData);
       alert("Processo cadastrado com sucesso!");
       navigate("/homepage");
@@ -192,7 +201,6 @@ const Register: React.FC = () => {
                 onChange={handleChange}
                 className={errors.creationDate ? "error" : ""}
               />
-
               {errors.creationDate && (
                 <p className="error-message">{errors.creationDate}</p>
               )}
