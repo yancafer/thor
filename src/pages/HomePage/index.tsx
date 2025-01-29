@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
   const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     if (user?.uid) {
@@ -267,9 +267,9 @@ const Dashboard: React.FC = () => {
               </th>
               <th className="table-header">Número do Processo</th>
               <th className="table-header">Assunto</th>
-              <th className="table-header">Data (criação)</th>
-              <th className="table-header">Data (recebimento)</th>
-              <th className="table-header">Data (envio)</th>
+              <th className="table-header">Criado</th>
+              <th className="table-header">Recebido</th>
+              <th className="table-header">Enviado</th>
               <th className="table-header">Status</th>
               <th className="table-header">Ações</th>
             </tr>
