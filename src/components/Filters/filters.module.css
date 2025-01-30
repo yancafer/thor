@@ -1,0 +1,31 @@
+/* Filtros - Container */
+.filtersContainer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Botão de Filtro */
+.filterButton {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.filterButton.active {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+}
+
+.filterButton:hover {
+  background-color: #0056b3;
+  color: #ffffff;
+}

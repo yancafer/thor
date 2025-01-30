@@ -8,7 +8,7 @@
   width: 100svw;
 }
 
-.button-box {
+.buttonBox {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,23 +20,23 @@
   height: 25rem;
 }
 
-.text-title {
+.textTitle {
   font-size: 2.5rem;
 }
 
-.text-subtitle {
+.textSubtitle {
   font-size: var(--font-size);
 }
 
-.button-group {
+.buttonGroup {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-.btn-login,
-.btn-register {
+.btnLogin,
+.btnRegister {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,20 +51,9 @@
   color: var(--font-primary-color);
 }
 
-.btn-login:hover,
-.btn-register:hover {
+.btnLogin:hover,
+.btnRegister:hover {
   transform: scale(1.05);
   box-shadow: 0 0.25rem 0.6rem rgba(0, 0, 0, 0.5);
   background-color: var(--button-hover-color);
-}
-
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translateY(1.25rem);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0);
-  }
 }
