@@ -10,15 +10,15 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user); // Usuário autenticado se `user` existir
-      setLoading(false); // Concluído o carregamento
+      setIsAuthenticated(!!user);
+      setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe();
   }, []);
 
   if (loading) {
-    return <p>Carregando...</p>; // Mostra um estado de carregamento enquanto verifica
+    return <p>Carregando...</p>;
   }
 
   if (!isAuthenticated) {

@@ -79,7 +79,6 @@ const Dashboard: React.FC = () => {
       <Sidebar />
 
       <main className={styles.mainContent}>
-        {/* Barra de Pesquisa e Filtros */}
         <section className={styles.searchFilterSection}>
           <input
             type="text"
@@ -91,7 +90,6 @@ const Dashboard: React.FC = () => {
           <Filters selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
         </section>
 
-        {/* Alteração de Status */}
         <section className={styles.statusSection}>
           <button
             className={styles.deleteGroupButton}
@@ -120,17 +118,15 @@ const Dashboard: React.FC = () => {
           </button>
         </section>
 
-        {/* Lista de Processos */}
         <ProcessTable
           processes={filteredProcesses}
           setProcesses={setProcesses}
           selectedProcesses={selectedProcesses}
           setSelectedProcesses={setSelectedProcesses}
-          selectedProcess={selectedProcess} // Passando corretamente
-          setSelectedProcess={setSelectedProcess} // Passando corretamente
+          selectedProcess={selectedProcess}
+          setSelectedProcess={setSelectedProcess}
         />
 
-        {/* Modal de Edição de Status */}
         {selectedProcess && (
           <ModalEditStatus
             selectedProcess={selectedProcess}
