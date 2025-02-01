@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./processTable.module.css";
 import { Process } from "../../utils/processUtils";
-import { Settings } from "lucide-react";
+import { LinkIcon, Settings } from "lucide-react";
 import Pagination from "../Pagination/Pagination";
 import ModalEditStatus from "../Modal/ModalEditStatus";
 
@@ -68,7 +68,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR");
   };
-  
+
   return (
     <div className={styles.processContainer}>
       {currentData.length > 0 ? (
@@ -81,9 +81,20 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                   checked={selectedProcesses.includes(process.id)}
                   onChange={() => handleSelectProcess(process.id)}
                 />
-                <span className={styles.processNumber}>{process.number}</span>
+                {process.link ? ( // Verifica se o processo tem um link válido
+                  <a
+                    href={process.link} // Usa o link real do processo
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.processLink}
+                  >
+                    <LinkIcon size={16} /> {/* Ícone do link */}
+                    <span className={styles.processNumber}>{process.number}</span>
+                  </a>
+                ) : (
+                  <span className={styles.processNumber}>{process.number}</span> // Caso não tenha link, apenas exibe o número
+                )}
               </div>
-
               <div className={styles.processDetails}>
                 <p><strong>Criado:</strong> {formatDateToBR(process.creationDate)}</p>
                 <p><strong>Recebido:</strong> {formatDateToBR(process.receivedDate)}</p>

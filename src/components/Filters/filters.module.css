@@ -1,15 +1,26 @@
+/* Wrapper para os filtros */
+.filtersWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 /* Filtros - Container */
 .filtersContainer {
   display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: center;
-  margin-bottom: 1.5rem;
 }
 
 /* Botão de Filtro */
 .filterButton {
   padding: 0.5rem 1.5rem;
-  border: 1px solid #ced4da;
+  border: 0.063rem solid #ced4da;
   border-radius: 0.3rem;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -17,15 +28,17 @@
   font-size: 0.9rem;
   font-weight: bold;
   color: #333;
+  min-width: 7.5rem;
+  text-align: center;
 }
 
+/* Botão ativo */
 .filterButton.active {
-  background-color: #007bff;
-  color: #ffffff;
-  border-color: #007bff;
+  background-color: var(--background-color-secondary);
+  color: white;
 }
 
 .filterButton:hover {
   background-color: #0056b3;
-  color: #ffffff;
+  color: white;
 }

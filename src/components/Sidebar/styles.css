@@ -1,7 +1,7 @@
 /* Sidebar */
 .sidebar {
   width: 16rem;
-  background-color: #2c2c34;
+  background-color: var(--background-color-secondary);
   display: flex;
   flex-direction: column;
   align-items: center;

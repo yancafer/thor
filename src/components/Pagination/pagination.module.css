@@ -19,7 +19,7 @@
 }
 
 .pageButton.activePage {
-  background-color: #007bff;
+  background-color: var(--background-color-secondary);
   color: white;
 }
 
