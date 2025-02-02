@@ -10,8 +10,8 @@
 /* Filtros - Container */
 .filtersContainer {
   display: flex;
-  justify-content: end;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   flex-wrap: wrap;
   gap: 0.5rem;
