@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./processTable.module.css";
 import { Process } from "../../utils/processUtils";
-import { LinkIcon, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import Pagination from "../Pagination/Pagination";
-import ModalEditStatus from "../Modal/ModalEditStatus";
 
 interface ProcessTableProps {
   processes: Process[];
@@ -22,9 +21,6 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   selectedProcess,
   setSelectedProcess
 }) => {
-
-  const [newStatus, setNewStatus] = useState<string>("");
-
   const [visibleItems, setVisibleItems] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -50,6 +46,10 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   const totalPages = Math.ceil(processes.length / visibleItems);
   const currentData = processes.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
 
+  const handleEditProcess = (process: Process) => {
+    setSelectedProcess(process);
+  };
+
   const handleSelectProcess = (processId: string) => {
     setSelectedProcesses((prev) =>
       prev.includes(processId)
@@ -58,59 +58,46 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     );
   };
 
-  const handleEditStatus = (process: Process) => {
-    setSelectedProcess(process);
-    setNewStatus(process.status);
-  };
-
-  const formatDateToBR = (dateString: string) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR");
-  };
-
   return (
     <div className={styles.processContainer}>
       {currentData.length > 0 ? (
         currentData.map((process) => (
           <div key={process.id} className={styles.processCard}>
-            <div className={styles.processHeader}>
-              <div className={styles.checkboxContainer}>
-                <input
-                  type="checkbox"
-                  checked={selectedProcesses.includes(process.id)}
-                  onChange={() => handleSelectProcess(process.id)}
-                />
-                {process.link ? ( // Verifica se o processo tem um link válido
-                  <a
-                    href={process.link} // Usa o link real do processo
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.processLink}
-                  >
-                    <LinkIcon size={16} /> {/* Ícone do link */}
-                    <span className={styles.processNumber}>{process.number}</span>
-                  </a>
-                ) : (
-                  <span className={styles.processNumber}>{process.number}</span> // Caso não tenha link, apenas exibe o número
-                )}
-              </div>
-              <div className={styles.processDetails}>
-                <p><strong>Criado:</strong> {formatDateToBR(process.creationDate)}</p>
-                <p><strong>Recebido:</strong> {formatDateToBR(process.receivedDate)}</p>
-                <p><strong>Enviado:</strong> {formatDateToBR(process.sentDate)}</p>
-                <p><strong>Status:</strong> {process.status}</p>
-              </div>
+            {/* Checkbox para seleção */}
+            <input
+              type="checkbox"
+              checked={selectedProcesses.includes(process.id)}
+              onChange={() => handleSelectProcess(process.id)}
+              className={styles.checkbox}
+            />
 
-              <span className={styles.actionEdit} onClick={() => handleEditStatus(process)}>
-                <Settings size={20} />
-              </span>
+            {/* Informações principais */}
+            <div className={styles.processDetails}>
+              <div className={styles.processNumber}>{process.number}</div>
+
+              <p><strong>Assunto:</strong> {process.subject}</p>
+
+              <div className={styles.processDates}>
+                <p><strong>Criado:</strong> {process.creationDate}</p>
+                <p><strong>Recebido:</strong> {process.receivedDate}</p>
+                <p><strong>Enviado:</strong> {process.sentDate}</p>
+              </div>
             </div>
 
-            <div className={styles.processBody}>
-              <p>
-                <strong>Assunto:</strong> {process.subject}
-              </p>
+            {/* Botões de ação */}
+            <div className={styles.actionButtons}>
+              <span className={`${styles.statusText} ${
+                process.status === "Em andamento"
+                  ? styles.statusEmAndamento
+                  : process.status === "Finalizado"
+                  ? styles.statusFinalizado
+                  : styles.statusEnviado
+              }`}>
+                {process.status}
+              </span>
+              <button onClick={() => handleEditProcess(process)} className={styles.editButton}>
+                <Settings size={20} />
+              </button>
             </div>
           </div>
         ))
@@ -119,15 +106,6 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
       )}
 
       <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
-
-      <ModalEditStatus
-        selectedProcess={selectedProcess}
-        setSelectedProcess={setSelectedProcess}
-        newStatus={newStatus}
-        setNewStatus={setNewStatus}
-        user={null}
-        fetchProcesses={() => { }}
-      />
     </div>
   );
 };

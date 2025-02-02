@@ -83,3 +83,54 @@
   margin-top: 1.5rem;
   gap: 0.5rem;
 }
+
+/* Alinhamento e tamanho dos botões */
+.statusSection {
+  display: flex;
+  justify-content: flex-start; /* Alinhando os botões à esquerda */
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Estilização dos botões */
+.deleteGroupButton,
+.confirmStatusButton,
+.groupStatusSelect {
+  padding: 0.6rem 1.2rem; /* Ajustando tamanho uniforme */
+  border: none;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 12rem; /* Garantindo que os botões tenham o mesmo tamanho */
+  text-align: center;
+}
+
+/* Botão de deletar */
+.deleteGroupButton {
+  background: #ff4d4d;
+  color: white;
+}
+
+.deleteGroupButton:hover {
+  background: #cc0000;
+}
+
+/* Seleção de status */
+.groupStatusSelect {
+  border: 1px solid #ced4da;
+  background-color: white;
+  color: #495057;
+}
+
+/* Botão de confirmar */
+.confirmStatusButton {
+  background: #007bff;
+  color: white;
+}
+
+.confirmStatusButton:hover {
+  background: #0056b3;
+}

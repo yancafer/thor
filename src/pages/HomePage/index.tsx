@@ -12,7 +12,6 @@ import {
 } from "../../utils/processUtils";
 import Filters from "../../components/Filters/Filters";
 import ProcessTable from "../../components/ProcessTable/ProcessTable";
-import Pagination from "../../components/Pagination/Pagination";
 import ModalEditStatus from "../../components/Modal/ModalEditStatus";
 
 const Dashboard: React.FC = () => {
@@ -88,34 +87,6 @@ const Dashboard: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <Filters selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
-        </section>
-
-        <section className={styles.statusSection}>
-          <button
-            className={styles.deleteGroupButton}
-            onClick={handleDeleteSelected}
-            disabled={selectedProcesses.length === 0}
-          >
-            Deletar Selecionados
-          </button>
-          <select
-            className={styles.groupStatusSelect}
-            value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value)}
-            disabled={selectedProcesses.length === 0}
-          >
-            <option value="">Alterar Status</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Finalizado">Finalizado</option>
-            <option value="Enviado">Enviado</option>
-          </select>
-          <button
-            className={styles.confirmStatusButton}
-            onClick={handleChangeStatusSelected}
-            disabled={!newStatus || selectedProcesses.length === 0}
-          >
-            Confirmar
-          </button>
         </section>
 
         <ProcessTable

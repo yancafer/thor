@@ -1,168 +1,98 @@
+/* Container principal ocupa a tela inteira sem scroll horizontal */
 .processContainer {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
+/* Lista de processos ocupa todo o espaço disponível */
+.processList {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto; /* Scroll apenas vertical, se necessário */
+  padding-right: 0.5rem; /* Ajuste para evitar scroll horizontal */
+}
+
+/* Cartão de processo agora ocupa a largura total */
 .processCard {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   background-color: white;
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   box-shadow: 0 0.25rem 0.3rem rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
-
-.processCard:hover {
-  transform: scale(1.02);
-}
-
-.processHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: bold;
-  border-bottom: 1px solid #ccc;
-  padding: 0.5rem;
-  gap: 1rem;
-}
-
-.processHeader p {
-  font-size: 0.9rem;
-  margin: 0;
-  padding: 0;
-}
-
-.processBody {
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
-  background-color: white;
-  color: black;
+  gap: 1rem;
+  transition: transform 0.3s ease;
+  width: 100%; /* Ocupa toda a largura */
+  max-width: 97%; /* Ajustável ao tamanho da tela */
+  margin: 0 auto;
 }
 
-.editInput {
-  padding: 0.3rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.3rem;
-  font-size: 0.9rem;
-  width: 100%;
+/* Ajuste ao passar o mouse */
+.processCard:hover {
+  transform: scale(1.01);
 }
 
-.saveIcon,
-.cancelIcon {
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-.saveIcon {
-  color: #28a745;
-}
-
-.saveIcon:hover {
-  color: #218838;
-}
-
-.cancelIcon {
-  color: #dc3545;
-}
-
-.cancelIcon:hover {
-  color: #c82333;
-}
-
-.tableEmpty {
-  text-align: center;
-  padding: 1.25rem;
-  font-size: 1rem;
-  color: #888888;
-  background-color: #f9f9f9;
-  border-radius: 0.625rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-  gap: 0.5rem;
-}
-
-.pageButton {
-  padding: 0.6rem 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.3rem;
-  background-color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.pageButton.activePage {
-  background-color: #007bff;
-  color: white;
-}
-
-.pageButton:hover {
-  background-color: #0056b3;
-  color: white;
-}
-
-.checkboxContainer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-grow: 1;
-  justify-content: flex-start;
-}
-
-.processNumber {
-  font-weight: bold;
-  color: var(--button-secondary-color);
-}
-
+/* Detalhes do processo */
 .processDetails {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  justify-content: flex-end;
-  flex-grow: 1;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
 }
 
-.processDetails p {
-  font-size: 0.9rem;
+/* Número do processo */
+.processNumber {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Ajuste de espaçamento para os detalhes */
+.processDates {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  font-size: 0.85rem;
+  color: #555;
+  flex-wrap: wrap; /* Responsividade melhorada */
+}
+
+.processDates p {
   margin: 0;
-  padding: 0;
 }
 
-.actionEdit {
-  cursor: pointer;
-  color: rgb(2, 12, 77);
-  transition: color 0.3s ease;
-}
-
-.actionEdit:hover {
-  color: #0056b3;
-}
-
-.processLink {
+/* Alinhamento dos botões e do status */
+.actionButtons {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: white;
-  text-decoration: none;
+}
+
+/* Status ao lado do botão de edição */
+.statusText {
+  font-size: 0.9rem;
   font-weight: bold;
-  transition: color 0.3s ease;
+  margin-right: 0.5rem;
+  text-transform: uppercase;
 }
 
-.processLink:hover {
-  color: #cce4ff;
+/* Cores do texto para os status */
+.statusEmAndamento {
+  color: orange;
 }
 
-.processLink svg {
-  margin-right: 0.25rem;
+.statusFinalizado {
+  color: blue;
 }
+
+.statusEnviado {
+  color: green;
+}
+
+
