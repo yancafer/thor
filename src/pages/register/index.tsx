@@ -24,6 +24,7 @@ const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
+  const maxSubjectLength = 160;
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -39,6 +40,8 @@ const Register: React.FC = () => {
     }
     if (!formData.subject.trim()) {
       newErrors.subject = "O assunto não pode estar vazio.";
+    } else if (formData.subject.length > maxSubjectLength) {
+      newErrors.subject = `O assunto não pode ter mais que ${maxSubjectLength} caracteres.`;
     }
     if (formData.creationDate) {
       const year = parseInt(formData.creationDate.split("-")[0], 10);
@@ -55,6 +58,9 @@ const Register: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    if (name === "subject" && value.length > maxSubjectLength) {
+      return;
+    }
     setFormData({ ...formData, [name]: value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
@@ -63,7 +69,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     if (!user) return;
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     try {
       await saveProcess(user.uid, formData);
@@ -82,9 +88,11 @@ const Register: React.FC = () => {
       <div className={styles.createProcess}>
         <h1 className={styles.formTitle}>Cadastro de Processos - SEI</h1>
         <form onSubmit={handleSubmit} noValidate>
+
+          {/* Número do Processo e Link */}
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="number">Número do processo *</label>
+              <label className={styles.label} htmlFor="number">Número do processo *</label>
               <input
                 id="number"
                 type="text"
@@ -92,13 +100,13 @@ const Register: React.FC = () => {
                 value={formData.number}
                 onChange={handleChange}
                 placeholder="Ex: 0009.016882.00112/2024-36"
-                className={errors.number ? styles.error : ""}
+                className={`${styles.input} ${errors.number ? styles.error : ""}`}
                 required
               />
               {errors.number && <p className={styles.errorMessage}>{errors.number}</p>}
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="link">Link do processo *</label>
+              <label className={styles.label} htmlFor="link">Link do processo *</label>
               <input
                 id="link"
                 type="url"
@@ -106,16 +114,17 @@ const Register: React.FC = () => {
                 value={formData.link}
                 onChange={handleChange}
                 placeholder="Cole o link"
-                className={errors.link ? styles.error : ""}
+                className={`${styles.input} ${errors.link ? styles.error : ""}`}
                 required
               />
               {errors.link && <p className={styles.errorMessage}>{errors.link}</p>}
             </div>
           </div>
 
+          {/* Assunto agora ocupa toda a linha */}
           <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label htmlFor="subject">Assunto *</label>
+            <div className={styles.formGroupFull}>
+              <label className={styles.label} htmlFor="subject">Assunto *</label>
               <input
                 id="subject"
                 type="text"
@@ -123,66 +132,80 @@ const Register: React.FC = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Digite o assunto"
-                className={errors.subject ? styles.error : ""}
+                className={`${styles.input} ${errors.subject ? styles.error : ""}`}
+                maxLength={maxSubjectLength}
                 required
               />
+              <p className={styles.charCount}>
+                {formData.subject.length}/{maxSubjectLength} caracteres
+              </p>
               {errors.subject && <p className={styles.errorMessage}>{errors.subject}</p>}
             </div>
+          </div>
+
+          {/* Datas corrigidas */}
+          <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="creationDate">Data de criação</label>
+              <label className={styles.label} htmlFor="creationDate">Data de criação</label>
               <input
                 id="creationDate"
                 type="date"
                 name="creationDate"
                 value={formData.creationDate}
                 onChange={handleChange}
-                className={errors.creationDate ? styles.error : ""}
+                className={`${styles.input} ${errors.creationDate ? styles.error : ""}`}
               />
               {errors.creationDate && <p className={styles.errorMessage}>{errors.creationDate}</p>}
             </div>
-          </div>
-
-          <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="receivedDate">Data de recebimento</label>
+              <label className={styles.label} htmlFor="receivedDate">Data de recebimento</label>
               <input
                 id="receivedDate"
                 type="date"
                 name="receivedDate"
                 value={formData.receivedDate}
                 onChange={handleChange}
+                className={styles.input}
               />
             </div>
+          </div>
+
+          {/* Data de envio e Status na mesma linha */}
+          <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="sentDate">Data de envio</label>
+              <label className={styles.label} htmlFor="sentDate">Data de envio</label>
               <input
                 id="sentDate"
                 type="date"
                 name="sentDate"
                 value={formData.sentDate}
                 onChange={handleChange}
+                className={styles.input}
               />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="status">Status *</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className={styles.select}
+                required
+              >
+                <option value="Em andamento">Em andamento</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Enviado">Enviado</option>
+              </select>
             </div>
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="status">Status *</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              required
-            >
-              <option value="Em andamento">Em andamento</option>
-              <option value="Finalizado">Finalizado</option>
-              <option value="Enviado">Enviado</option>
-            </select>
+          {/* Botão centralizado */}
+          <div className={styles.formButtonContainer}>
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? "Cadastrando..." : "Cadastrar"}
+            </button>
           </div>
-
-          <button type="submit" className={styles.submitButton} disabled={isLoading}>
-            {isLoading ? "Cadastrando..." : "Cadastrar"}
-          </button>
         </form>
       </div>
     </div>

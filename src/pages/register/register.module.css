@@ -20,6 +20,8 @@
   border-radius: 0.75rem;
   background: rgb(219, 219, 219);
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .formTitle {
@@ -32,56 +34,79 @@
 
 .formRow {
   display: flex;
-  gap: 1.25rem;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .formGroup {
-  flex: 1;
-}
-
-.fullWidth {
-  flex: none;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  max-width: 22rem; /* Mantém todos os campos alinhados */
 }
 
-.formGroup label {
-  display: block;
+.formGroupFull {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 46rem; /* Ocupa toda a linha, alinhado com os demais */
+}
+
+.label {
   font-weight: 600;
-  margin-bottom: 0.3125rem;
+  margin-bottom: 0.3rem;
   color: #555;
+  text-align: center;
+  text-align: left;
 }
 
-.formGroup input,
-.formGroup select {
+.input, .select {
   width: 100%;
-  padding: 0.75rem;
+  max-width: 22rem; /* Mantém o mesmo tamanho dos outros campos */
+  padding: 0.5rem;
   font-size: 1rem;
-  border: 0.0625rem solid #ddd;
+  border: 0.1rem solid #ddd;
   border-radius: 0.5rem;
   background-color: #fafafa;
   transition: border-color 0.3s ease;
+  text-align: left; /* Agora o texto dentro do campo está alinhado à esquerda */
+  display: block; /* Garante alinhamento correto */
+  box-sizing: border-box; /* Evita que padding/borda alterem o tamanho */
+  height: 2.6rem; /* Agora tem a mesma altura dos outros campos */
 }
 
-.formGroup input:focus,
-.formGroup select:focus {
+.input:focus, .select:focus {
   outline: none;
   border-color: #007bff;
   background-color: #ffffff;
 }
 
-.submitButton {
+.formGroupFull .input {
   width: 100%;
+  max-width: 100%; /* O campo Assunto ocupa toda a linha */
+
+}
+
+.submitButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 22rem;
   padding: 0.75rem;
   font-size: 1.125rem;
   font-weight: bold;
-  background-color: #007bff;
+  background-color: #0B2B4D;
   color: #ffffff;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 1.25rem;
+  margin: 1.25rem auto 0;
+  text-align: left;
 }
 
 .submitButton:hover {
@@ -92,19 +117,42 @@
   background-color: #003f8c;
 }
 
-.registerPage {
-  display: flex;
-  height: 100vh; /* Ocupa 100% da altura da tela */
-  width: 100vw; /* Ocupa 100% da largura da tela */
-  background-color: #f4f6f9;
+.charCount {
+  font-size: 0.875rem;
+  color: #555;
+  text-align: right;
+  margin-top: 0.25rem;
+  width: 100%;
 }
 
-.sidebar {
-  flex-shrink: 0;
-  height: 100vh; /* Faz a barra lateral ocupar 100% da altura da tela */
-  width: 16rem; /* Largura fixa da sidebar */
-  background-color: #ffffff; /* Ajuste se necessário */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.errorMessage {
+  font-size: 0.875rem;
+  color: red;
+  margin-top: 0.25rem;
+}
+
+.error {
+  border: 0.1rem solid red;
+  background-color: #ffe6e6;
+}
+
+.select {
+  width: 100%;
+  max-width: 22rem; /* Agora tem exatamente a mesma largura que os outros campos */
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  transition: border-color 0.3s ease;
+  text-align: center;
+  height: 2.6rem; /* Agora tem a mesma altura dos outros campos */
+  display: block; /* Garante alinhamento correto */
+  box-sizing: border-box; /* Evita que padding/borda alterem o tamanho */
+}
+
+.select:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #ffffff;
 }
