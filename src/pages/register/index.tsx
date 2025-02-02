@@ -4,10 +4,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { addDoc, collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import DOMPurify from "dompurify";
-import "./styles.css";
+import styles from "./register.module.css";
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,11 +28,8 @@ const Register: React.FC = () => {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     const sanitizedNumber = DOMPurify.sanitize(formData.number);
-
-    // Ano atual
     const currentYear = new Date().getFullYear();
 
-    // Validações
     if (!sanitizedNumber.match(/^[0-9./-]+$/)) {
       newErrors.number =
         "O número do processo deve conter apenas números, pontos (.), barras (/) e hífens (-).";
@@ -58,93 +55,35 @@ const Register: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    const currentYear = new Date().getFullYear();
-
-    if (name === "creationDate" || name === "receivedDate" || name === "sentDate") {
-      const year = value.split("-")[0];
-      if (
-        year.length > 4 ||
-        parseInt(year, 10) < 2010 ||
-        parseInt(year, 10) > currentYear
-      ) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: `Ano inválido. Insira um ano entre 2010 e ${currentYear}.`,
-        }));
-        return;
-      }
-    }
-
     setFormData({ ...formData, [name]: value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const checkIfProcessExists = async () => {
-    if (!user) return false;
-
-    const processesRef = collection(db, "users", user.uid, "processes");
-    const q = query(processesRef, where("number", "==", formData.number));
-
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  };
-
-  const saveProcess = async (userId: string, data: any) => {
-    const processesRef = collection(db, "users", userId, "processes");
-    await addDoc(processesRef, {
-      ...data,
-      createdAt: new Date(), // Adiciona a data de criação
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      console.error("Usuário não autenticado.");
-      return;
-    }
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!user) return;
+    if (!validateForm()) return;
+    
     setIsLoading(true);
-
     try {
-      const processExists = await checkIfProcessExists();
-      if (processExists) {
-        setErrors({ number: "Este número de processo já está cadastrado." });
-        setIsLoading(false);
-        return;
-      }
-
-      const sanitizedData = {
-        ...formData,
-        number: DOMPurify.sanitize(formData.number),
-        link: DOMPurify.sanitize(formData.link),
-        subject: DOMPurify.sanitize(formData.subject),
-      };
-
-      // O campo "creationDate" será gerado automaticamente no backend
-      await saveProcess(user.uid, sanitizedData);
+      await saveProcess(user.uid, formData);
       alert("Processo cadastrado com sucesso!");
       navigate("/homepage");
     } catch (err) {
-      console.error("Erro ao salvar o processo:", err);
-      alert("Erro ao salvar o processo. Tente novamente.");
+      alert("Erro ao salvar o processo.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="register-page">
+    <div className={styles.registerPage}>
       <Sidebar />
-      <div className="create-process">
-        <h1 className="form-title">Cadastro de Processos - SEI</h1>
+      <div className={styles.createProcess}>
+        <h1 className={styles.formTitle}>Cadastro de Processos - SEI</h1>
         <form onSubmit={handleSubmit} noValidate>
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <label htmlFor="number">Número do processo *</label>
               <input
                 id="number"
@@ -153,12 +92,12 @@ const Register: React.FC = () => {
                 value={formData.number}
                 onChange={handleChange}
                 placeholder="Ex: 0009.016882.00112/2024-36"
-                className={errors.number ? "error" : ""}
+                className={errors.number ? styles.error : ""}
                 required
               />
-              {errors.number && <p className="error-message">{errors.number}</p>}
+              {errors.number && <p className={styles.errorMessage}>{errors.number}</p>}
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="link">Link do processo *</label>
               <input
                 id="link"
@@ -167,15 +106,15 @@ const Register: React.FC = () => {
                 value={formData.link}
                 onChange={handleChange}
                 placeholder="Cole o link"
-                className={errors.link ? "error" : ""}
+                className={errors.link ? styles.error : ""}
                 required
               />
-              {errors.link && <p className="error-message">{errors.link}</p>}
+              {errors.link && <p className={styles.errorMessage}>{errors.link}</p>}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <label htmlFor="subject">Assunto *</label>
               <input
                 id="subject"
@@ -184,14 +123,12 @@ const Register: React.FC = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Digite o assunto"
-                className={errors.subject ? "error" : ""}
+                className={errors.subject ? styles.error : ""}
                 required
               />
-              {errors.subject && (
-                <p className="error-message">{errors.subject}</p>
-              )}
+              {errors.subject && <p className={styles.errorMessage}>{errors.subject}</p>}
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="creationDate">Data de criação</label>
               <input
                 id="creationDate"
@@ -199,16 +136,14 @@ const Register: React.FC = () => {
                 name="creationDate"
                 value={formData.creationDate}
                 onChange={handleChange}
-                className={errors.creationDate ? "error" : ""}
+                className={errors.creationDate ? styles.error : ""}
               />
-              {errors.creationDate && (
-                <p className="error-message">{errors.creationDate}</p>
-              )}
+              {errors.creationDate && <p className={styles.errorMessage}>{errors.creationDate}</p>}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <label htmlFor="receivedDate">Data de recebimento</label>
               <input
                 id="receivedDate"
@@ -218,7 +153,7 @@ const Register: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="sentDate">Data de envio</label>
               <input
                 id="sentDate"
@@ -230,7 +165,7 @@ const Register: React.FC = () => {
             </div>
           </div>
 
-          <div className="form-group full-width">
+          <div className={styles.formGroup}>
             <label htmlFor="status">Status *</label>
             <select
               id="status"
@@ -245,11 +180,7 @@ const Register: React.FC = () => {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={isLoading}
-          >
+          <button type="submit" className={styles.submitButton} disabled={isLoading}>
             {isLoading ? "Cadastrando..." : "Cadastrar"}
           </button>
         </form>
