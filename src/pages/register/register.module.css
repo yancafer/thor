@@ -45,14 +45,14 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 22rem; /* Mantém todos os campos alinhados */
+  max-width: 22rem;
 }
 
 .formGroupFull {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 46rem; /* Ocupa toda a linha, alinhado com os demais */
+  max-width: 46rem;
 }
 
 .label {
@@ -65,17 +65,17 @@
 
 .input, .select {
   width: 100%;
-  max-width: 22rem; /* Mantém o mesmo tamanho dos outros campos */
+  max-width: 22rem;
   padding: 0.5rem;
   font-size: 1rem;
   border: 0.1rem solid #ddd;
   border-radius: 0.5rem;
   background-color: #fafafa;
   transition: border-color 0.3s ease;
-  text-align: left; /* Agora o texto dentro do campo está alinhado à esquerda */
-  display: block; /* Garante alinhamento correto */
-  box-sizing: border-box; /* Evita que padding/borda alterem o tamanho */
-  height: 2.6rem; /* Agora tem a mesma altura dos outros campos */
+  text-align: left;
+  display: block;
+  box-sizing: border-box;
+  height: 2.6rem; 
 }
 
 .input:focus, .select:focus {
@@ -86,7 +86,7 @@
 
 .formGroupFull .input {
   width: 100%;
-  max-width: 100%; /* O campo Assunto ocupa toda a linha */
+  max-width: 100%;
 
 }
 
@@ -138,7 +138,7 @@
 
 .select {
   width: 100%;
-  max-width: 22rem; /* Agora tem exatamente a mesma largura que os outros campos */
+  max-width: 22rem;
   padding: 0.5rem;
   font-size: 1rem;
   border: 0.1rem solid #ddd;
@@ -146,9 +146,9 @@
   background-color: #fafafa;
   transition: border-color 0.3s ease;
   text-align: center;
-  height: 2.6rem; /* Agora tem a mesma altura dos outros campos */
-  display: block; /* Garante alinhamento correto */
-  box-sizing: border-box; /* Evita que padding/borda alterem o tamanho */
+  height: 2.6rem;
+  display: block; 
+  box-sizing: border-box;
 }
 
 .select:focus {
