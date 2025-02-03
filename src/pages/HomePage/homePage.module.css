@@ -18,8 +18,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
-  gap: 1.5rem;
+  padding: 1rem; /* Reduzido */
+  gap: 0.8rem; /* Menor espaçamento entre os elementos */
 }
 
 /* Barra de pesquisa e filtros */
@@ -27,7 +27,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem; /* Reduzido */
   width: 97%;
 }
 
@@ -108,16 +108,6 @@
   text-align: center;
 }
 
-/* Botão de deletar */
-.deleteGroupButton {
-  background: #ff4d4d;
-  color: white;
-}
-
-.deleteGroupButton:hover {
-  background: #cc0000;
-}
-
 /* Seleção de status */
 .groupStatusSelect {
   border: 1px solid #ced4da;
@@ -125,12 +115,37 @@
   color: #495057;
 }
 
-/* Botão de confirmar */
-.confirmStatusButton {
-  background: #007bff;
-  color: white;
+.actionButtonsSection {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; /* Alinha verticalmente */
+  width: 100%;
+  padding: 0.5rem; /* Reduzido */
+  margin-bottom: 0.5rem; /* Garante espaço para a paginação */
 }
 
-.confirmStatusButton:hover {
-  background: #0056b3;
+
+.deleteGroupButton {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem; /* Reduzido */
+  border-radius: 0.3rem;
+  font-size: 0.85rem; /* Menor */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: auto; /* Ajuste automático ao conteúdo */
+  min-width: 100px; /* Define um tamanho mínimo */
+  text-align: center;
+}
+
+.deleteGroupButton:hover {
+  background: #cc0000;
+}
+
+
+.deleteGroupButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

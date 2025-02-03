@@ -12,6 +12,7 @@ interface ProcessTableProps {
   setProcesses: React.Dispatch<React.SetStateAction<Process[]>>;
   selectedProcesses: string[];
   setSelectedProcesses: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedProcess: Process | null; // 🔥 Adicione esta linha
   setSelectedProcess: React.Dispatch<React.SetStateAction<Process | null>>;
 }
 
@@ -47,7 +48,11 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   }, []);
 
   const totalPages = Math.ceil(processes.length / visibleItems);
-  const currentData = processes.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
+  const sortedProcesses = [...processes].sort(
+    (a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
+  );
+  const currentData = sortedProcesses.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
+
 
   const handleEditProcess = (process: Process) => {
     setEditingProcess(process);
@@ -121,9 +126,8 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
 
     try {
       const querySnapshot = await getDocs(collection(db, "users", user.uid, "processes"));
-      const processes = querySnapshot.docs.map((doc) => {
+      let fetchedProcesses = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-
         return {
           id: doc.id,
           number: data.number || "",
@@ -136,8 +140,14 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         };
       });
 
-      console.log("✅ Processos carregados:", processes);
-      setProcesses(processes);
+      // Ordenação correta pelo mais recente primeiro
+      fetchedProcesses.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+
+      console.log("✅ Processos carregados e ordenados:", fetchedProcesses);
+
+      // Garantindo que o estado sempre reflete a ordenação correta
+      setProcesses([...fetchedProcesses]);
+
     } catch (error) {
       console.error("❌ Erro ao buscar processos:", error);
     }
@@ -185,8 +195,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         console.error("❌ Erro ao obter ID do documento.");
         return;
       }
-
-      setProcesses((prev) => [...prev, { ...newProcess, id }]);
+      setProcesses((prev) => [{ ...newProcess, id }, ...prev]);
 
       console.log("✅ Processo criado com sucesso!");
     } catch (error) {

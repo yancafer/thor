@@ -46,15 +46,20 @@ const Dashboard: React.FC = () => {
     });
 
     setFilteredProcesses(filtered);
-    setCurrentPage(1); // Reinicia para a primeira página ao mudar os filtros
+    setCurrentPage(1);
   }, [searchTerm, selectedFilter, processes]);
 
-  const handleDeleteSelected = () => {
-    if (user?.uid) {
-      deleteSelectedProcesses(user.uid, selectedProcesses, () => {
-        fetchProcesses(user.uid!, setProcesses, setFilteredProcesses);
-        setSelectedProcesses([]);
-      });
+  const handleDeleteSelected = async () => {
+    if (user?.uid && selectedProcesses.length > 0) {
+      try {
+        await deleteSelectedProcesses(user.uid, selectedProcesses, () => {
+          fetchProcesses(user.uid!, setProcesses, setFilteredProcesses);
+          setSelectedProcesses([]); // Reseta a seleção após a remoção
+        });
+      } catch (error) {
+        toast.error("Erro ao remover processos.");
+        console.error("Erro ao deletar processos:", error);
+      }
     }
   };
 
@@ -87,6 +92,15 @@ const Dashboard: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <Filters selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
+        </section>
+        <section className={styles.actionButtonsSection}>
+          <button
+            className={styles.deleteGroupButton}
+            onClick={handleDeleteSelected}
+            disabled={selectedProcesses.length === 0} // Desabilita se nada estiver selecionado
+          >
+            Remover Selecionados
+          </button>
         </section>
 
         <ProcessTable
