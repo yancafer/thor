@@ -53,6 +53,18 @@
   font-weight: bold;
 }
 
+.processLink {
+  text-decoration: none; /* Remove o sublinhado */
+  color: #0B2B4D; /* Cor azul padrão de links */
+  font-weight: bold; /* Deixa o texto mais destacado */
+  transition: color 0.3s ease-in-out; /* Animação de mudança de cor */
+}
+
+.processLink:hover {
+  color: #0056b3; /* Cor azul mais escura ao passar o mouse */
+  text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
+}
+
 /* Ajuste de espaçamento para os detalhes */
 .processDates {
   display: flex;

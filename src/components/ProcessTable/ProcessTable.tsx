@@ -12,9 +12,15 @@ interface ProcessTableProps {
   setProcesses: React.Dispatch<React.SetStateAction<Process[]>>;
   selectedProcesses: string[];
   setSelectedProcesses: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedProcess: Process | null; // 🔥 Adicione esta linha
+  selectedProcess: Process | null;
   setSelectedProcess: React.Dispatch<React.SetStateAction<Process | null>>;
 }
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("pt-BR");
+};
 
 const ProcessTable: React.FC<ProcessTableProps> = ({
   processes,
@@ -255,13 +261,23 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                 </>
               ) : (
                 <>
-                  <div className={styles.processNumber}>{process.number}</div>
-                  <p><strong>Assunto:</strong> {process.subject}</p>
-                  <div className={styles.processDates}>
-                    <p><strong>Criado:</strong> {process.creationDate}</p>
-                    <p><strong>Recebido:</strong> {process.receivedDate}</p>
-                    <p><strong>Enviado:</strong> {process.sentDate}</p>
+                  <div className={styles.processNumber}>
+                    {process.link ? (
+                      <a href={process.link} target="_blank" rel="noopener noreferrer" className={styles.processLink}>
+                        {process.number}
+                      </a>
+                    ) : (
+                      process.number
+                    )}
                   </div>
+
+                  <p><strong></strong> {process.subject}</p>
+                  <div className={styles.processDates}>
+                    <p><strong>Criado:</strong> {formatDate(process.creationDate)}</p>
+                    <p><strong>Recebido:</strong> {formatDate(process.receivedDate)}</p>
+                    <p><strong>Enviado:</strong> {formatDate(process.sentDate)}</p>
+                  </div>
+
                 </>
               )}
             </div>
