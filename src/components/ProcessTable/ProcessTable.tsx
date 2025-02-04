@@ -60,7 +60,8 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   const sortedProcesses = [...processes].sort(
     (a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
   );
-  const currentData = sortedProcesses.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
+  const reversedData = [...sortedProcesses].reverse(); // Inverte a ordem da exibição
+  const currentData = reversedData.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
 
   const handleEditProcess = (process: Process) => {
     setEditingProcess(process);
