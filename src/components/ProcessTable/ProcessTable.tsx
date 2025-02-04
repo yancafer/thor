@@ -59,7 +59,6 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   );
   const currentData = sortedProcesses.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
 
-
   const handleEditProcess = (process: Process) => {
     setEditingProcess(process);
     setEditedValues({ ...process });
@@ -146,13 +145,14 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         };
       });
 
-      // Ordenação correta pelo mais recente primeiro
+      // 🔥 GARANTE QUE A ORDEM ESTEJA SEMPRE DO MAIS NOVO PARA O MAIS ANTIGO
       fetchedProcesses.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
 
       console.log("✅ Processos carregados e ordenados:", fetchedProcesses);
 
-      // Garantindo que o estado sempre reflete a ordenação correta
+      // 🔥 ATUALIZA O ESTADO E DEFINE A VISUALIZAÇÃO PARA A PRIMEIRA PÁGINA
       setProcesses([...fetchedProcesses]);
+      setCurrentPage(1);
 
     } catch (error) {
       console.error("❌ Erro ao buscar processos:", error);
@@ -185,7 +185,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     }
 
     const newProcess = {
-      number: "12345",
+      number: "12345", // Aqui você deve capturar os dados do formulário
       subject: "Novo Processo",
       creationDate: new Date().toISOString(),
       receivedDate: "",
@@ -201,13 +201,18 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         console.error("❌ Erro ao obter ID do documento.");
         return;
       }
-      setProcesses((prev) => [{ ...newProcess, id }, ...prev]);
 
       console.log("✅ Processo criado com sucesso!");
+
+      // 🔥 GARANTINDO QUE O NOVO PROCESSO FIQUE NO TOPO E ATUALIZANDO A PÁGINA PARA 1
+      setProcesses((prev) => [{ ...newProcess, id }, ...prev]);
+      setCurrentPage(1);
+
     } catch (error) {
       console.error("❌ Erro ao criar o processo:", error);
     }
   };
+
 
   return (
     <div className={styles.processContainer}>
