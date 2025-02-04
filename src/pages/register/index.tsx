@@ -4,10 +4,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { addDoc, collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import DOMPurify from "dompurify";
-import "./styles.css";
+import styles from "./register.module.css";
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -24,15 +24,14 @@ const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
+  const maxSubjectLength = 160;
+  const [processExists, setProcessExists] = useState<boolean | null>(null);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     const sanitizedNumber = DOMPurify.sanitize(formData.number);
-
-    // Ano atual
     const currentYear = new Date().getFullYear();
 
-    // Validações
     if (!sanitizedNumber.match(/^[0-9./-]+$/)) {
       newErrors.number =
         "O número do processo deve conter apenas números, pontos (.), barras (/) e hífens (-).";
@@ -42,6 +41,8 @@ const Register: React.FC = () => {
     }
     if (!formData.subject.trim()) {
       newErrors.subject = "O assunto não pode estar vazio.";
+    } else if (formData.subject.length > maxSubjectLength) {
+      newErrors.subject = `O assunto não pode ter mais que ${maxSubjectLength} caracteres.`;
     }
     if (formData.creationDate) {
       const year = parseInt(formData.creationDate.split("-")[0], 10);
@@ -54,98 +55,83 @@ const Register: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const currentYear = new Date().getFullYear();
-
-    if (name === "creationDate" || name === "receivedDate" || name === "sentDate") {
-      const year = value.split("-")[0];
-      if (
-        year.length > 4 ||
-        parseInt(year, 10) < 2010 ||
-        parseInt(year, 10) > currentYear
-      ) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: `Ano inválido. Insira um ano entre 2010 e ${currentYear}.`,
-        }));
-        return;
-      }
+    if (name === "subject" && value.length > maxSubjectLength) {
+      return;
     }
 
     setFormData({ ...formData, [name]: value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
 
-  const checkIfProcessExists = async () => {
-    if (!user) return false;
-
-    const processesRef = collection(db, "users", user.uid, "processes");
-    const q = query(processesRef, where("number", "==", formData.number));
-
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  };
-
-  const saveProcess = async (userId: string, data: any) => {
-    const processesRef = collection(db, "users", userId, "processes");
-    await addDoc(processesRef, {
-      ...data,
-      createdAt: new Date(), // Adiciona a data de criação
-    });
+    // Verifica se o número do processo já existe quando atingir 25 caracteres ou mais
+    if (name === "number") {
+      checkProcessExists(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      console.error("Usuário não autenticado.");
-      return;
-    }
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!user) return;
+    if (!validateForm()) return;
 
     setIsLoading(true);
-
     try {
-      const processExists = await checkIfProcessExists();
-      if (processExists) {
-        setErrors({ number: "Este número de processo já está cadastrado." });
+      // Verifica se o processo já existe no Firestore
+      const processRef = collection(db, "users", user.uid, "processes");
+      const querySnapshot = await getDocs(query(processRef, where("number", "==", formData.number)));
+
+      if (!querySnapshot.empty) {
+        alert("Este processo já foi cadastrado!");
         setIsLoading(false);
         return;
       }
 
-      const sanitizedData = {
-        ...formData,
-        number: DOMPurify.sanitize(formData.number),
-        link: DOMPurify.sanitize(formData.link),
-        subject: DOMPurify.sanitize(formData.subject),
-      };
-
-      // O campo "creationDate" será gerado automaticamente no backend
-      await saveProcess(user.uid, sanitizedData);
+      // Se não existir, salva o novo processo
+      await saveProcess(user.uid, formData);
       alert("Processo cadastrado com sucesso!");
       navigate("/homepage");
     } catch (err) {
-      console.error("Erro ao salvar o processo:", err);
-      alert("Erro ao salvar o processo. Tente novamente.");
+      alert("Erro ao salvar o processo.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const checkProcessExists = async (processNumber: string) => {
+    if (processNumber.length < 25) {
+      setProcessExists(null); // Não verifica enquanto não atingir 25 caracteres
+      return;
+    }
+
+    if (!user) return;
+
+    try {
+      const processRef = collection(db, "users", user.uid, "processes");
+      const querySnapshot = await getDocs(query(processRef, where("number", "==", processNumber)));
+
+      if (!querySnapshot.empty) {
+        setProcessExists(true);
+      } else {
+        setProcessExists(false);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar processo:", error);
+    }
+  };
+
+
   return (
-    <div className="register-page">
+    <div className={styles.registerPage}>
       <Sidebar />
-      <div className="create-process">
-        <h1 className="form-title">Cadastro de Processos - SEI</h1>
+      <div className={styles.createProcess}>
+        <h1 className={styles.formTitle}>Cadastro de Processos - SEI</h1>
         <form onSubmit={handleSubmit} noValidate>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="number">Número do processo *</label>
+
+          {/* Número do Processo e Link */}
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="number">Número do processo *</label>
               <input
                 id="number"
                 type="text"
@@ -153,13 +139,15 @@ const Register: React.FC = () => {
                 value={formData.number}
                 onChange={handleChange}
                 placeholder="Ex: 0009.016882.00112/2024-36"
-                className={errors.number ? "error" : ""}
+                className={`${styles.input} ${errors.number || processExists ? styles.error : ""}`}
                 required
               />
-              {errors.number && <p className="error-message">{errors.number}</p>}
+              {errors.number && <p className={styles.errorMessage}>{errors.number}</p>}
+              {processExists && <p className={styles.errorMessage}>Este processo já está cadastrado.</p>}
             </div>
-            <div className="form-group">
-              <label htmlFor="link">Link do processo *</label>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="link">Link do processo *</label>
               <input
                 id="link"
                 type="url"
@@ -167,16 +155,17 @@ const Register: React.FC = () => {
                 value={formData.link}
                 onChange={handleChange}
                 placeholder="Cole o link"
-                className={errors.link ? "error" : ""}
+                className={`${styles.input} ${errors.link ? styles.error : ""}`}
                 required
               />
-              {errors.link && <p className="error-message">{errors.link}</p>}
+              {errors.link && <p className={styles.errorMessage}>{errors.link}</p>}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="subject">Assunto *</label>
+          {/* Assunto agora ocupa toda a linha */}
+          <div className={styles.formRow}>
+            <div className={styles.formGroupFull}>
+              <label className={styles.label} htmlFor="subject">Assunto *</label>
               <input
                 id="subject"
                 type="text"
@@ -184,74 +173,80 @@ const Register: React.FC = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Digite o assunto"
-                className={errors.subject ? "error" : ""}
+                className={`${styles.input} ${errors.subject ? styles.error : ""}`}
+                maxLength={maxSubjectLength}
                 required
               />
-              {errors.subject && (
-                <p className="error-message">{errors.subject}</p>
-              )}
+              <p className={styles.charCount}>
+                {formData.subject.length}/{maxSubjectLength} caracteres
+              </p>
+              {errors.subject && <p className={styles.errorMessage}>{errors.subject}</p>}
             </div>
-            <div className="form-group">
-              <label htmlFor="creationDate">Data de criação</label>
+          </div>
+
+          {/* Datas corrigidas */}
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="creationDate">Data de criação</label>
               <input
                 id="creationDate"
                 type="date"
                 name="creationDate"
                 value={formData.creationDate}
                 onChange={handleChange}
-                className={errors.creationDate ? "error" : ""}
+                className={`${styles.input} ${errors.creationDate ? styles.error : ""}`}
               />
-              {errors.creationDate && (
-                <p className="error-message">{errors.creationDate}</p>
-              )}
+              {errors.creationDate && <p className={styles.errorMessage}>{errors.creationDate}</p>}
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="receivedDate">Data de recebimento</label>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="receivedDate">Data de recebimento</label>
               <input
                 id="receivedDate"
                 type="date"
                 name="receivedDate"
                 value={formData.receivedDate}
                 onChange={handleChange}
+                className={styles.input}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="sentDate">Data de envio</label>
+          </div>
+
+          {/* Data de envio e Status na mesma linha */}
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="sentDate">Data de envio</label>
               <input
                 id="sentDate"
                 type="date"
                 name="sentDate"
                 value={formData.sentDate}
                 onChange={handleChange}
+                className={styles.input}
               />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="status">Status *</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className={styles.select}
+                required
+              >
+                <option value="Em andamento">Em andamento</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Enviado">Enviado</option>
+              </select>
             </div>
           </div>
 
-          <div className="form-group full-width">
-            <label htmlFor="status">Status *</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              required
-            >
-              <option value="Em andamento">Em andamento</option>
-              <option value="Finalizado">Finalizado</option>
-              <option value="Enviado">Enviado</option>
-            </select>
+          {/* Botão centralizado */}
+          <div className={styles.formButtonContainer}>
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? "Cadastrando..." : "Cadastrar"}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={isLoading}
-          >
-            {isLoading ? "Cadastrando..." : "Cadastrar"}
-          </button>
         </form>
       </div>
     </div>

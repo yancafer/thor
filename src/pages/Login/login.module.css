@@ -1,84 +1,78 @@
-/* Estilo da página de login */
-.nav-login {
+.navLogin {
   display: flex;
-  flex-direction: row;
-  height: 100vh; /* Preenche toda a altura da tela */
+  height: 100vh;
   width: 100%;
 }
 
-/* Lateral com a logo */
-.nav-img {
+.navImg {
   background-color: #ececec;
-  height: 100vh; /* 100% da altura da tela */
-  width: 50%; /* Largura lateral da tela */
+  width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-logo {
-  width: 70%; /* Escala a imagem */
+.loginLogo {
+  width: 70%;
 }
 
-/* Área de login */
-.login-content {
-  width: 50%; /* 50% da tela */
+.loginContent {
+  width: 50%;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #f9f9f9; /* Cor clara */
+  background-color: #f9f9f9;
 }
 
-/* Títulos */
-.login-content h1 {
+.loginContent h1 {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #333;
+  margin-bottom: 1rem;
+  color: #000;
 }
 
-.login-content h2 {
+.loginContent h2 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   color: #666;
 }
 
-.login-content p {
+.loginContent p {
   margin-bottom: 2rem;
   font-size: 1rem;
   color: #555;
 }
 
-/* Formulário */
-.login-form {
+.loginForm {
   width: 100%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
 }
 
-.login-input {
+.loginInput {
   width: 100%;
   padding: 1rem;
   margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
-.login-input.error {
+.loginInput.error {
   border: 2px solid red;
   background-color: #ffe6e6;
 }
 
-/* Botão */
-.login-button {
+.loginButton {
   width: 100%;
+  max-width: 400px;
   padding: 1rem;
   font-size: 1rem;
-  background-color: #4e8df6;
+  background-color: var(--background-color-secondary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -86,29 +80,27 @@
   transition: background-color 0.3s ease;
 }
 
-.login-button:hover {
+.loginButton:hover {
   background-color: #3a6fc3;
 }
 
-/* Rodapé do formulário */
-.login-footer {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+.loginFooter {
+  margin-top: 1.5rem;
+  font-size: 0.3rem;
   color: #666;
 }
 
-.login-footer a {
-  color: #4e8df6;
+.loginFooter a {
+  color:rgb(21, 102, 243);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.login-footer a:hover {
+.loginFooter a:hover {
   color: #3a6fc3;
 }
 
-/* Loader Container */
-.loader-container {
+.loaderContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -116,13 +108,12 @@
   gap: 10px;
 }
 
-.loader-container p {
+.loaderContainer p {
   font-size: 1rem;
   color: #4e8df6;
   font-weight: bold;
 }
 
-/* Spinner */
 .spinner {
   width: 40px;
   height: 40px;
@@ -132,22 +123,19 @@
   animation: spin 1s linear infinite;
 }
 
-/* Loader Animation */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Mensagens de erro */
-.error-message {
+.errorMessage {
   color: red;
   font-size: 0.9rem;
-  margin-top: -10px;
   margin-bottom: 10px;
 }
 
-.login-error {
+.loginError {
   color: red;
   font-size: 1rem;
   margin-top: 15px;

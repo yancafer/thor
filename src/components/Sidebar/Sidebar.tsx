@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/firebaseConfig";
-import "./styles.css";
+import { LogOut } from "lucide-react";
+import styles from "./sideBar.module.css";
 import UserLogo from "../../assets/avatar.png";
 
 const Sidebar: React.FC = () => {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  const location = useLocation(); // Obtém a rota atual
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
@@ -19,33 +20,35 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { path: "/homepage", label: "Controle de Processos" },
     { path: "/createprocess", label: "Cadastro de Processos SEI" },
-    { path: "", label: "Tutoriais SEI (em breve)", disabled: true },
   ];
 
   return (
-    <aside className="sidebar">
-      <div className="user-info">
-        <img src={UserLogo} alt="User Avatar" className="avatar" />
-        <p className="user-email">{user?.email || "Usuário"}</p>
+    <aside className={styles.sidebar}>
+      <div className={styles.userInfo}>
+        <img src={UserLogo} alt="User Avatar" className={styles.avatar} />
+        <p className={styles.userEmail}>{user?.email || "Usuário"}</p>
       </div>
       <nav>
-        <ul className="menu-container">
+        <ul className={styles.menuContainer}>
           {menuItems.map((item, index) => (
             <li
               key={index}
-              className={`menu-item ${
-                location.pathname === item.path ? "active" : ""
-              } ${item.disabled ? "disabled" : ""}`}
-              onClick={() => !item.disabled && navigate(item.path)}
+              className={`${styles.menuItem} ${
+                location.pathname === item.path ? styles.active : ""
+              }`}
+              onClick={() => navigate(item.path)}
             >
               {item.label}
             </li>
           ))}
-          <li className="menu-item logout" onClick={handleLogout}>
-            Deslogar
-          </li>
         </ul>
       </nav>
+      <div className={styles.logoutContainer}>
+        <div className={styles.logoutItem} onClick={handleLogout}>
+          <LogOut className={styles.logoutIcon} />
+          Deslogar
+        </div>
+      </div>
     </aside>
   );
 };

@@ -10,7 +10,7 @@ import dirjuspLogo from "../../assets/dirjusp.png";
 import DOMPurify from "dompurify";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./style.css";
+import styles from './login.module.css';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -63,32 +63,32 @@ function Login() {
   };
 
   return (
-    <div className="nav-login">
+    <div className={styles.navLogin}>
       <ToastContainer />
-      <div className="nav-img">
+      <div className={styles.navImg}>
         <img
           src={dirjuspLogo}
           alt="Observatório - Dirjusp"
-          className="login-logo"
+          className={styles.loginLogo}
         />
       </div>
 
-      <div className="login-content">
-        <h1>Observatório - Dirjusp</h1>
+      <div className={styles.loginContent}>
+        <h1>Observatório - DIRJUSP</h1>
         <h2>Seja bem-vindo!</h2>
         <p>Para acessar o sistema, faça login com seu usuário e senha.</p>
 
         {isLoading ? (
-          <div className="loader-container">
-            <div className="spinner"></div>
+          <div className={styles.loaderContainer}>
+            <div className={styles.spinner}></div>
             <p>Entrando...</p>
           </div>
         ) : (
-          <form className="login-form" onSubmit={handleLogin} noValidate>
+          <form className={styles.loginForm} onSubmit={handleLogin} noValidate>
             <input
               type="email"
               placeholder="E-mail"
-              className={`login-input ${error?.field === "email" ? "error" : ""}`}
+              className={`${styles.loginInput} ${error?.field === "email" ? styles.error : ""}`}
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -97,14 +97,12 @@ function Login() {
               required
             />
             {error?.field === "email" && (
-              <p className="error-message">{error.message}</p>
+              <p className={styles.errorMessage}>{error.message}</p>
             )}
             <input
               type="password"
               placeholder="Senha"
-              className={`login-input ${
-                error?.field === "password" ? "error" : ""
-              }`}
+              className={`${styles.loginInput} ${error?.field === "password" ? styles.error : ""}`}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -113,11 +111,11 @@ function Login() {
               required
             />
             {error?.field === "password" && (
-              <p className="error-message">{error.message}</p>
+              <p className={styles.errorMessage}>{error.message}</p>
             )}
             <button
               type="submit"
-              className="login-button"
+              className={styles.loginButton}
               disabled={isLoading}
             >
               Entrar
@@ -126,10 +124,10 @@ function Login() {
         )}
 
         {error?.field === "general" && (
-          <p className="login-error">{error.message}</p>
+          <p className={styles.loginError}>{error.message}</p>
         )}
 
-        <p className="login-footer">
+        <p className={styles.loginFooter}>
           Ainda não tem uma conta? <Link to="/signup">Cadastre-se</Link>
         </p>
       </div>
