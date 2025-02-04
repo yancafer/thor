@@ -145,12 +145,10 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         };
       });
 
-      // 🔥 GARANTE QUE A ORDEM ESTEJA SEMPRE DO MAIS NOVO PARA O MAIS ANTIGO
       fetchedProcesses.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
 
       console.log("✅ Processos carregados e ordenados:", fetchedProcesses);
 
-      // 🔥 ATUALIZA O ESTADO E DEFINE A VISUALIZAÇÃO PARA A PRIMEIRA PÁGINA
       setProcesses([...fetchedProcesses]);
       setCurrentPage(1);
 
@@ -185,7 +183,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     }
 
     const newProcess = {
-      number: "12345", // Aqui você deve capturar os dados do formulário
+      number: "12345",
       subject: "Novo Processo",
       creationDate: new Date().toISOString(),
       receivedDate: "",
@@ -204,7 +202,6 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
 
       console.log("✅ Processo criado com sucesso!");
 
-      // 🔥 GARANTINDO QUE O NOVO PROCESSO FIQUE NO TOPO E ATUALIZANDO A PÁGINA PARA 1
       setProcesses((prev) => [{ ...newProcess, id }, ...prev]);
       setCurrentPage(1);
 
