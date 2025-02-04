@@ -25,6 +25,7 @@ const Register: React.FC = () => {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
   const maxSubjectLength = 160;
+  const [processExists, setProcessExists] = useState<boolean | null>(null);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -54,15 +55,19 @@ const Register: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "subject" && value.length > maxSubjectLength) {
       return;
     }
+
     setFormData({ ...formData, [name]: value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
+
+    // Verifica se o número do processo já existe quando atingir 25 caracteres ou mais
+    if (name === "number") {
+      checkProcessExists(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,6 +77,17 @@ const Register: React.FC = () => {
 
     setIsLoading(true);
     try {
+      // Verifica se o processo já existe no Firestore
+      const processRef = collection(db, "users", user.uid, "processes");
+      const querySnapshot = await getDocs(query(processRef, where("number", "==", formData.number)));
+
+      if (!querySnapshot.empty) {
+        alert("Este processo já foi cadastrado!");
+        setIsLoading(false);
+        return;
+      }
+
+      // Se não existir, salva o novo processo
       await saveProcess(user.uid, formData);
       alert("Processo cadastrado com sucesso!");
       navigate("/homepage");
@@ -81,6 +97,29 @@ const Register: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const checkProcessExists = async (processNumber: string) => {
+    if (processNumber.length < 25) {
+      setProcessExists(null); // Não verifica enquanto não atingir 25 caracteres
+      return;
+    }
+
+    if (!user) return;
+
+    try {
+      const processRef = collection(db, "users", user.uid, "processes");
+      const querySnapshot = await getDocs(query(processRef, where("number", "==", processNumber)));
+
+      if (!querySnapshot.empty) {
+        setProcessExists(true);
+      } else {
+        setProcessExists(false);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar processo:", error);
+    }
+  };
+
 
   return (
     <div className={styles.registerPage}>
@@ -100,11 +139,13 @@ const Register: React.FC = () => {
                 value={formData.number}
                 onChange={handleChange}
                 placeholder="Ex: 0009.016882.00112/2024-36"
-                className={`${styles.input} ${errors.number ? styles.error : ""}`}
+                className={`${styles.input} ${errors.number || processExists ? styles.error : ""}`}
                 required
               />
               {errors.number && <p className={styles.errorMessage}>{errors.number}</p>}
+              {processExists && <p className={styles.errorMessage}>Este processo já está cadastrado.</p>}
             </div>
+
             <div className={styles.formGroup}>
               <label className={styles.label} htmlFor="link">Link do processo *</label>
               <input
