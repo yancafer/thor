@@ -33,21 +33,29 @@ const Dashboard: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    const filtered = processes.filter((process) => {
-      // Verifica se o termo de pesquisa está no número ou no assunto
-      const matchesSearch =
+    let filtered;
+  
+    if (selectedFilter === "") {
+      // 🚀 Mostra todos os processos e aplica pesquisa
+      filtered = processes.filter((process) =>
         process.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        process.subject.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // Verifica se o status filtrado é compatível
-      const matchesStatus = selectedFilter ? process.status === selectedFilter : true;
-
-      return matchesSearch && matchesStatus;
-    });
-
+        process.subject.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    } else {
+      // 🔍 Aplica o filtro de status e pesquisa
+      filtered = processes.filter((process) =>
+        (process.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        process.subject.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        process.status === selectedFilter
+      );
+    }
+  
+    // 🚀 Sempre mantém a ordenação do mais recente para o mais antigo
+    filtered.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+  
     setFilteredProcesses(filtered);
     setCurrentPage(1);
-  }, [searchTerm, selectedFilter, processes]);
+  }, [searchTerm, selectedFilter, processes]);     
 
   const handleDeleteSelected = async () => {
     if (user?.uid && selectedProcesses.length > 0) {
@@ -102,15 +110,18 @@ const Dashboard: React.FC = () => {
             Remover Selecionados
           </button>
         </section>
+        
 
         <ProcessTable
           processes={filteredProcesses}
           setProcesses={setProcesses}
+          setFilteredProcesses={setFilteredProcesses} // Adicionado
           selectedProcesses={selectedProcesses}
           setSelectedProcesses={setSelectedProcesses}
           selectedProcess={selectedProcess}
           setSelectedProcess={setSelectedProcess}
         />
+
 
         {selectedProcess && (
           <ModalEditStatus

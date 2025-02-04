@@ -7,23 +7,23 @@ interface FiltersProps {
 }
 
 const Filters: React.FC<FiltersProps> = ({ selectedFilter, setSelectedFilter }) => {
-  const filters = ["", "Finalizado", "Em andamento", "Enviado"];
+  const filters = ["Todos", "Finalizado", "Em andamento", "Enviado"];
 
   return (
     <div className={styles.filtersWrapper}>
       <div className={styles.filtersContainer}>
         {filters.map((filter) => (
           <button
-            key={filter || "Todos"}
-            className={`${styles.filterButton} ${selectedFilter === filter ? styles.active : ""}`}
-            onClick={() => setSelectedFilter(filter)}
+            key={filter}
+            className={`${styles.filterButton} ${selectedFilter === (filter === "Todos" ? "" : filter) ? styles.active : ""}`}
+            onClick={() => setSelectedFilter(filter === "Todos" ? "" : filter)}
           >
-            {filter || "Todos"}
+            {filter}
           </button>
         ))}
       </div>
     </div>
-  );
-};
+  );  
+};  
 
 export default Filters;
