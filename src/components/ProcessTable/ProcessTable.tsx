@@ -10,7 +10,7 @@ import { saveProcess } from "../../firebase/processes";
 interface ProcessTableProps {
   processes: Process[];
   setProcesses: React.Dispatch<React.SetStateAction<Process[]>>;
-  setFilteredProcesses: React.Dispatch<React.SetStateAction<Process[]>>; // Adicionado
+  setFilteredProcesses: React.Dispatch<React.SetStateAction<Process[]>>;
   selectedProcesses: string[];
   setSelectedProcesses: React.Dispatch<React.SetStateAction<string[]>>;
   selectedProcess: Process | null;
@@ -26,7 +26,7 @@ const formatDate = (dateString: string) => {
 const ProcessTable: React.FC<ProcessTableProps> = ({
   processes,
   setProcesses,
-  setFilteredProcesses, // Adicione isso aqui
+  setFilteredProcesses,
   selectedProcesses,
   setSelectedProcesses,
   setSelectedProcess
@@ -57,11 +57,11 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   }, []);
 
   const totalPages = Math.ceil(processes.length / visibleItems);
-  const sortedProcesses = [...processes].sort(
-    (a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
-  );
-  const reversedData = [...sortedProcesses].reverse(); // Inverte a ordem da exibição
-  const currentData = reversedData.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
+  const sortedProcesses = [...processes].sort((a, b) => {
+    return (b.orderDate || 0) - (a.orderDate || 0);
+  });  
+
+  const currentData = sortedProcesses.slice((currentPage - 1) * visibleItems, currentPage * visibleItems);
 
   const handleEditProcess = (process: Process) => {
     setEditingProcess(process);
@@ -85,7 +85,11 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
 
       if (!docSnap.exists()) {
         console.warn("⚠ Documento não encontrado. Criando um novo...");
-        const { id, ...processData } = editedValues;
+        const { id, ...processData } = {
+          ...editedValues,
+          receivedDate: editedValues.receivedDate || "",
+          sentDate: editedValues.sentDate || "",
+        };
         const newId = await saveProcess(user.uid, processData);
 
         if (!newId) {
@@ -97,7 +101,6 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         return;
       }
 
-      // Atualiza o documento existente
       await updateDoc(processRef, {
         number: editedValues.number,
         subject: editedValues.subject,
@@ -142,7 +145,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
           id: doc.id,
           number: data.number || "",
           subject: data.subject || "",
-          creationDate: data.creationDate ? new Date(data.creationDate).toISOString() : new Date().toISOString(), // 🚀 Garante que a data seja válida
+          creationDate: data.creationDate ? new Date(data.creationDate).toISOString() : new Date().toISOString(),
           receivedDate: data.receivedDate || "",
           sentDate: data.sentDate || "",
           link: data.link || "",
@@ -150,13 +153,12 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
         };
       });
 
-      // 🚀 Ordena os processos do mais recente para o mais antigo
       fetchedProcesses.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
 
       console.log("✅ Processos carregados e ordenados:", fetchedProcesses);
 
       setProcesses([...fetchedProcesses]);
-      setFilteredProcesses([...fetchedProcesses]); // Aplica a ordenação também nos filtrados
+      setFilteredProcesses([...fetchedProcesses]);
       setCurrentPage(1);
 
     } catch (error) {
@@ -189,13 +191,13 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
       return;
     }
 
-    const now = new Date(); // Obtemos a data atual
-    const formattedDate = now.toISOString(); // Garante que a data seja salva no formato correto
+    const now = new Date();
+    const formattedDate = now.toISOString();
 
     const newProcess = {
       number: "12345",
       subject: "Novo Processo",
-      creationDate: formattedDate, // Usa a hora exata no formato correto
+      creationDate: formattedDate,
       receivedDate: "",
       sentDate: "",
       link: "",
@@ -213,16 +215,15 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
       console.log("✅ Processo criado com sucesso!");
 
       setProcesses((prev) => {
-        // 🚀 Insere no topo e garante que a ordenação seja correta
         const updatedProcesses = [{ ...newProcess, id }, ...prev].sort(
           (a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
         );
 
-        setFilteredProcesses([...updatedProcesses]); // Atualiza a lista filtrada com ordenação correta
+        setFilteredProcesses([...updatedProcesses]);
         return updatedProcesses;
       });
 
-      setCurrentPage(1); // Garante que a página volte para a primeira
+      setCurrentPage(1);
 
     } catch (error) {
       console.error("❌ Erro ao criar o processo:", error);
@@ -294,8 +295,8 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                   <p><strong></strong> {process.subject}</p>
                   <div className={styles.processDates}>
                     <p><strong>Criado:</strong> {formatDate(process.creationDate)}</p>
-                    <p><strong>Recebido:</strong> {formatDate(process.receivedDate)}</p>
-                    <p><strong>Enviado:</strong> {formatDate(process.sentDate)}</p>
+                    <p><strong>Recebido:</strong> {formatDate(process.receivedDate || "")}</p>
+                    <p><strong>Enviado:</strong> {formatDate(process.sentDate || "")}</p>
                   </div>
 
                 </>

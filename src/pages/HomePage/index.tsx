@@ -36,22 +36,17 @@ const Dashboard: React.FC = () => {
     let filtered;
   
     if (selectedFilter === "") {
-      // 🚀 Mostra todos os processos e aplica pesquisa
       filtered = processes.filter((process) =>
         process.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
         process.subject.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } else {
-      // 🔍 Aplica o filtro de status e pesquisa
       filtered = processes.filter((process) =>
         (process.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
         process.subject.toLowerCase().includes(searchTerm.toLowerCase())) &&
         process.status === selectedFilter
       );
     }
-  
-    // 🚀 Sempre mantém a ordenação do mais recente para o mais antigo
-    filtered.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
   
     setFilteredProcesses(filtered);
     setCurrentPage(1);
@@ -62,7 +57,7 @@ const Dashboard: React.FC = () => {
       try {
         await deleteSelectedProcesses(user.uid, selectedProcesses, () => {
           fetchProcesses(user.uid!, setProcesses, setFilteredProcesses);
-          setSelectedProcesses([]); // Reseta a seleção após a remoção
+          setSelectedProcesses([]);
         });
       } catch (error) {
         toast.error("Erro ao remover processos.");
@@ -105,23 +100,21 @@ const Dashboard: React.FC = () => {
           <button
             className={styles.deleteGroupButton}
             onClick={handleDeleteSelected}
-            disabled={selectedProcesses.length === 0} // Desabilita se nada estiver selecionado
+            disabled={selectedProcesses.length === 0}
           >
             Remover Selecionados
           </button>
         </section>
         
-
         <ProcessTable
           processes={filteredProcesses}
           setProcesses={setProcesses}
-          setFilteredProcesses={setFilteredProcesses} // Adicionado
+          setFilteredProcesses={setFilteredProcesses}
           selectedProcesses={selectedProcesses}
           setSelectedProcesses={setSelectedProcesses}
           selectedProcess={selectedProcess}
           setSelectedProcess={setSelectedProcess}
         />
-
 
         {selectedProcess && (
           <ModalEditStatus

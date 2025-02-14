@@ -8,6 +8,7 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import DOMPurify from "dompurify";
 import styles from "./register.module.css";
+import { Process } from "../../utils/processUtils";
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,8 @@ const Register: React.FC = () => {
     receivedDate: "",
     sentDate: "",
     status: "Em andamento",
-  });
+    orderDate: Date.now(),
+  });  
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -87,8 +89,7 @@ const Register: React.FC = () => {
         return;
       }
 
-      // Se não existir, salva o novo processo
-      await saveProcess(user.uid, formData);
+      await saveProcess(user.uid, { ...formData, orderDate: Date.now() });
       alert("Processo cadastrado com sucesso!");
       navigate("/homepage");
     } catch (err) {
@@ -100,7 +101,7 @@ const Register: React.FC = () => {
 
   const checkProcessExists = async (processNumber: string) => {
     if (processNumber.length < 25) {
-      setProcessExists(null); // Não verifica enquanto não atingir 25 caracteres
+      setProcessExists(null);
       return;
     }
 

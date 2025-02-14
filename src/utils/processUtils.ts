@@ -8,14 +8,12 @@ export interface Process {
   link: string;
   subject: string;
   creationDate: string;
-  receivedDate: string;
-  sentDate: string;
+  receivedDate?: string;
+  sentDate?: string;
   status: string;
+  orderDate?: number;
 }
 
-/**
- * Função para buscar processos do Firebase Firestore.
- */
 export const fetchProcesses = async (
   userId: string,
   setProcesses: (processes: Process[]) => void,
@@ -23,13 +21,24 @@ export const fetchProcesses = async (
 ) => {
   try {
     const querySnapshot = await getDocs(collection(db, "users", userId, "processes"));
-    const fetchedProcesses: Process[] = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Process[];
+    
+    const fetchedProcesses: Process[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+    
+      return {
+        id: doc.id,
+        number: data.number || "",
+        subject: data.subject || "",
+        creationDate: data.creationDate || new Date().toISOString(),
+        receivedDate: data.receivedDate || "",
+        sentDate: data.sentDate || "",
+        link: data.link || "", // 🔥 Agora incluímos `link`, evitando o erro
+        status: data.status || "Em andamento",
+        orderDate: typeof data.orderDate === "number" ? data.orderDate : new Date(data.creationDate || Date.now()).getTime(), 
+      };
+    });      
 
-    // Ordenação por data de criação (decrescente)
-    fetchedProcesses.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+    fetchedProcesses.sort((a, b) => (b.orderDate || 0) - (a.orderDate || 0));
 
     setProcesses(fetchedProcesses);
     setFilteredProcesses(fetchedProcesses);
@@ -39,9 +48,6 @@ export const fetchProcesses = async (
   }
 };
 
-/**
- * Função para deletar processos selecionados do Firestore.
- */
 export const deleteSelectedProcesses = async (userId: string, selectedProcesses: string[], fetchProcesses: () => void) => {
   if (!userId || selectedProcesses.length === 0) return;
 
@@ -59,9 +65,6 @@ export const deleteSelectedProcesses = async (userId: string, selectedProcesses:
   }
 };
 
-/**
- * Função para atualizar o status de processos selecionados no Firestore.
- */
 export const updateSelectedProcessesStatus = async (
   userId: string,
   selectedProcesses: string[],
@@ -84,9 +87,6 @@ export const updateSelectedProcessesStatus = async (
   }
 };
 
-/**
- * Função para atualizar o status de um único processo no Firestore.
- */
 export const updateProcessStatus = async (
   userId: string,
   processId: string,
@@ -97,7 +97,7 @@ export const updateProcessStatus = async (
 
   try {
     await updateDoc(doc(db, "users", userId, "processes", processId), { status: newStatus });
-    fetchProcesses(); // Atualiza os processos após salvar
+    fetchProcesses();
   } catch (error) {
     console.error("Erro ao atualizar status:", error);
   }
